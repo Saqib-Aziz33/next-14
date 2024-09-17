@@ -21,14 +21,14 @@ model User {
 }
 
 model Customer {
-  id       Int        @id @default(autoincrement())
-  email    String     @unique
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
   name     String
   image    String
-  invoices Invoices[]
+  invoices Invoice[]
 }
 
-model Invoices {
+model Invoice {
   id          Int      @id @default(autoincrement())
   amount      Int
   date        DateTime @default(now())

@@ -29,7 +29,7 @@ async function seedInvoices() {
   const insertedInvoices = await Promise.all(
     invoices.map((invoice) => {
       const isoDate = new Date(invoice.date);
-      return prisma.invoices.create({
+      return prisma.invoice.create({
         data: {
           status: invoice.status,
           amount: invoice.amount,
