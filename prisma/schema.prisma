@@ -14,25 +14,26 @@ datasource db {
 }
 
 model User {
-  id       Int        @id @default(autoincrement())
-  email    String     @unique
-  name     String     @db.VarChar(255)
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  name     String @db.VarChar(255)
   password String
-  Invoices Invoices[]
 }
 
 model Customer {
-  id    Int    @id @default(autoincrement())
-  email String @unique
-  name  String
-  image String
+  id       Int        @id @default(autoincrement())
+  email    String     @unique
+  name     String
+  image    String
+  invoices Invoices[]
 }
 
 model Invoices {
-  id          Int    @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   amount      Int
+  date        DateTime @default(now())
   status      Status
-  customer    User   @relation(fields: [customer_id], references: [id])
+  customer    Customer @relation(fields: [customer_id], references: [id])
   customer_id Int
 }
 
