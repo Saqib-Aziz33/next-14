@@ -4,18 +4,19 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import prisma from "./db";
 import { redirect } from "next/navigation";
+import { Inputs } from "../ui/invoices/create-form";
 
 const FormSchema = z.object({
   id: z.number(),
   customerId: z.string(),
-  amount: z.coerce.number(),
+  amount: z.coerce.string(),
   status: z.enum(["pending", "paid"]),
   date: z.string(),
 });
 
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
 
-export async function createInvoice(formData: FormData) {
+export async function createInvoice(formData: Inputs) {
   // option 1
   //   const rawFormData = {
   //     customerId: formData.get("customerId"),
@@ -28,12 +29,8 @@ export async function createInvoice(formData: FormData) {
   //   console.log(rawFormData);
   //   console.log(typeof rawFormData.amount);
 
-  const { customerId, amount, status } = CreateInvoice.parse({
-    customerId: formData.get("customerId"),
-    amount: formData.get("amount"),
-    status: formData.get("status"),
-  });
-  const amountInCents = amount * 100;
+  const { customerId, amount, status } = CreateInvoice.parse(formData);
+  const amountInCents = Number(amount) * 100;
   const date = new Date().toISOString();
 
   try {
@@ -63,7 +60,7 @@ export async function updateInvoice(id: number, formData: FormData) {
     status: formData.get("status"),
   });
 
-  const amountInCents = amount * 100;
+  const amountInCents = Number(amount) * 100;
 
   try {
     await prisma.invoice.update({
