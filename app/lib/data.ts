@@ -139,6 +139,9 @@ export async function fetchFilteredInvoices(
       },
       take: ITEMS_PER_PAGE,
       skip: offset,
+      orderBy: {
+        date: "desc",
+      },
     });
 
     return invoices;
@@ -181,25 +184,19 @@ export async function fetchInvoicesPages(query: string) {
   }
 }
 
-export async function fetchInvoiceById(id: string) {
+export async function fetchInvoiceById(id: number) {
   try {
-    const data = await sql<InvoiceForm>`
-      SELECT
-        invoices.id,
-        invoices.customer_id,
-        invoices.amount,
-        invoices.status
-      FROM invoices
-      WHERE invoices.id = ${id};
-    `;
+    const data = await prisma.invoice.findUnique({
+      where: { id: id },
+    });
+    if (!data) return null;
 
-    const invoice = data.rows.map((invoice) => ({
-      ...invoice,
-      // Convert amount from cents to dollars
-      amount: invoice.amount / 100,
-    }));
+    const invoice = {
+      ...data,
+      amount: data.amount / 100,
+    };
 
-    return invoice[0];
+    return invoice;
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch invoice.");
@@ -208,15 +205,7 @@ export async function fetchInvoiceById(id: string) {
 
 export async function fetchCustomers() {
   try {
-    const data = await sql<CustomerField>`
-      SELECT
-        id,
-        name
-      FROM customers
-      ORDER BY name ASC
-    `;
-
-    const customers = data.rows;
+    const customers = await prisma.customer.findMany();
     return customers;
   } catch (err) {
     console.error("Database Error:", err);
