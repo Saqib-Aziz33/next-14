@@ -8,6 +8,5 @@ For more information, see the [course curriculum](https://nextjs.org/learn) on t
 
 ### Offical Nextjs course with mysql and prisma ORM instead of vercel postgresql
 
-- The /seed route for the official course has been modified to be compatible with Prisma.
-- The app/lib/placeholder-data.ts file has also been modified to be compatible with Prisma and MySQL.
-- Both files can be restored to the Next.js official version from the git history in the first commit.
+- All database files actions and route handlers are modified to prisma version
+- In chapter 14, instead form action state managment and validations, i implemented react-hook-forms
