@@ -5,6 +5,13 @@ import { revalidatePath } from "next/cache";
 import prisma from "./db";
 import { redirect } from "next/navigation";
 import { Inputs } from "../ui/invoices/create-form";
+import { signIn } from "@/auth";
+import { AuthError } from "next-auth";
+
+export type LoginInputs = {
+  email: string;
+  password: string;
+};
 
 const FormSchema = z.object({
   id: z.number(),
@@ -95,5 +102,21 @@ export async function deleteInvoice(id: number) {
     return {
       message: "Database Error: Failed to Delete Invoice.",
     };
+  }
+}
+
+export async function authenticate(formData: LoginInputs) {
+  try {
+    await signIn("credentials", formData);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case "CredentialsSignin":
+          return "Invalid credentials.";
+        default:
+          return "Something went wrong.";
+      }
+    }
+    throw error;
   }
 }
